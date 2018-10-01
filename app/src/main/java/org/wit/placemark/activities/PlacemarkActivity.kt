@@ -26,19 +26,30 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
     toolbarAdd.title = title
     setSupportActionBar(toolbarAdd)
 
+    if (intent.hasExtra("placemark_edit")){
+      placemark = intent.extras.getParcelable<PlacemarkModel>("placemark_edit")
+      btnAdd.setText(getString(R.string.button_savePlacemark))
+      placemarkTitle.setText(placemark.title)
+      placemarkDescription.setText(placemark.description)
+    }
+
     btnAdd.setOnClickListener() {
       placemark.title = placemarkTitle.text.toString()
       placemark.description = placemarkDescription.text.toString()
       if (placemark.title.isNotEmpty()) {
-        app.placemarks.add(placemark.copy())
+        if (intent.hasExtra("placemark_edit")){
+          app.placemarks.update(placemark.copy())
+          toast(getString(R.string.toast_placemarkSaved))
+        } else {
+          app.placemarks.create(placemark.copy())
+          toast(getString(R.string.toast_placemarkAdded))
+        }
         info("add Button Pressed: $placemarkTitle")
-        app.placemarks.forEach { info("add Button Pressed: ${it}")}
-        toast("Successfully added!")
         setResult(AppCompatActivity.RESULT_OK)
         finish()
       }
       else {
-        toast("Please Enter a title")
+        toast(getString(R.string.toast_enterTitle))
       }
     }
   }
