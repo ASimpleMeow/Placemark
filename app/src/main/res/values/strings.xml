@@ -9,4 +9,7 @@
   <string name="toast_enterTitle">Please Enter A Title</string>
   <string name="toast_placemarkAdded">Placemark Added Successfully</string>
   <string name="toast_placemarkSaved">Placemark Saved Successfully</string>
+  <string name="button_addImage"> Add Image </string>
+  <string name="button_changeImage"> Change Image </string>
+  <string name="select_placemark_image">Select placemark image</string>
 </resources>
