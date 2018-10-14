@@ -8,18 +8,24 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_placemark.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import org.wit.placemark.R
 import org.wit.placemark.helpers.readImage
 import org.wit.placemark.helpers.readImageFromPath
 import org.wit.placemark.helpers.showImagePicker
 import org.wit.placemark.main.MainApp
+import org.wit.placemark.models.Location
 import org.wit.placemark.models.PlacemarkModel
 
 
 class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
 
   val IMAGE_REQUEST = 1
+
+  val LOCATION_REQUEST = 2
+  var location = Location(52.245696, -7.139102, 15f)
+
   var placemark = PlacemarkModel()
   lateinit var app : MainApp
 
@@ -39,6 +45,9 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
       placemarkDescription.setText(placemark.description)
       if (placemark.image.isNotEmpty()) chooseImage.setText(R.string.button_changeImage)
       placemarkImage.setImageBitmap(readImageFromPath(this, placemark.image))
+      location.lat = placemark.lat
+      location.lng = placemark.lng
+      location.zoom = placemark.zoom
       edit = true
     }
 
@@ -46,9 +55,16 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
       showImagePicker(this, IMAGE_REQUEST)
     }
 
+    placemarkLocation.setOnClickListener {
+      startActivityForResult(intentFor<MapsActivity>().putExtra("location", location), LOCATION_REQUEST)
+    }
+
     btnAdd.setOnClickListener() {
       placemark.title = placemarkTitle.text.toString()
       placemark.description = placemarkDescription.text.toString()
+      placemark.lat = location.lat
+      placemark.lng = location.lng
+      placemark.zoom = location.zoom
       if (placemark.title.isNotEmpty()) {
         if (edit){
           app.placemarks.update(placemark.copy())
@@ -89,6 +105,12 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
         if (data != null) {
           placemark.image = data.getData().toString()
           placemarkImage.setImageBitmap(readImage(this, resultCode, data))
+          chooseImage.setText(R.string.button_changeImage)
+        }
+      }
+      LOCATION_REQUEST -> {
+        if (data != null) {
+          location = data.extras.getParcelable<Location>("location")
         }
       }
     }
