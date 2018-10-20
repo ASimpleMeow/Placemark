@@ -22,9 +22,7 @@ import org.wit.placemark.models.PlacemarkModel
 class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
 
   val IMAGE_REQUEST = 1
-
   val LOCATION_REQUEST = 2
-  var location = Location(52.245696, -7.139102, 15f)
 
   var placemark = PlacemarkModel()
   lateinit var app : MainApp
@@ -45,9 +43,6 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
       placemarkDescription.setText(placemark.description)
       if (placemark.image.isNotEmpty()) chooseImage.setText(R.string.button_changeImage)
       placemarkImage.setImageBitmap(readImageFromPath(this, placemark.image))
-      location.lat = placemark.lat
-      location.lng = placemark.lng
-      location.zoom = placemark.zoom
       edit = true
     }
 
@@ -56,15 +51,18 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
     }
 
     placemarkLocation.setOnClickListener {
+      val location = Location(52.245696, -7.139102, 15f)
+      if (placemark.zoom != 0f) {
+        location.lat =  placemark.lat
+        location.lng = placemark.lng
+        location.zoom = placemark.zoom
+      }
       startActivityForResult(intentFor<MapsActivity>().putExtra("location", location), LOCATION_REQUEST)
     }
 
     btnAdd.setOnClickListener() {
       placemark.title = placemarkTitle.text.toString()
       placemark.description = placemarkDescription.text.toString()
-      placemark.lat = location.lat
-      placemark.lng = location.lng
-      placemark.zoom = location.zoom
       if (placemark.title.isNotEmpty()) {
         if (edit){
           app.placemarks.update(placemark.copy())
@@ -94,6 +92,10 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
         setResult(AppCompatActivity.RESULT_OK)
         finish()
       }
+      R.id.item_delete -> {
+        app.placemarks.delete(placemark.copy())
+        finish()
+      }
     }
     return super.onOptionsItemSelected(item)
   }
@@ -110,7 +112,10 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
       }
       LOCATION_REQUEST -> {
         if (data != null) {
-          location = data.extras.getParcelable<Location>("location")
+          val location = data.extras.getParcelable<Location>("location")
+          placemark.lat = location.lat
+          placemark.lng = location.lng
+          placemark.zoom = location.zoom
         }
       }
     }

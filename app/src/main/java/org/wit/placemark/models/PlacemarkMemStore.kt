@@ -13,7 +13,7 @@ class PlacemarkMemStore: PlacemarkStore, AnkoLogger{
 
   val placemarks = ArrayList<PlacemarkModel>()
 
-  override fun finalAll():List<PlacemarkModel>{
+  override fun finalAll():MutableList<PlacemarkModel>{
     return placemarks
   }
 
@@ -34,6 +34,10 @@ class PlacemarkMemStore: PlacemarkStore, AnkoLogger{
       foundPlacemark.zoom = placemark.zoom
       logAll()
     }
+  }
+
+  override fun delete(placemark: PlacemarkModel) {
+    placemarks.remove(placemark)
   }
 
   fun logAll(){
