@@ -17,6 +17,10 @@ class PlacemarkMemStore: PlacemarkStore, AnkoLogger{
     return placemarks
   }
 
+  override fun findById(id:Long) : PlacemarkModel? {
+    return placemarks.find { it.id == id }
+  }
+
   override fun create(placemark: PlacemarkModel){
     placemark.id = getId()
     placemarks.add(placemark)

@@ -25,6 +25,7 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
   val LOCATION_REQUEST = 2
 
   var placemark = PlacemarkModel()
+  var edit = false
   lateinit var app : MainApp
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +36,11 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
     toolbarAdd.title = title
     setSupportActionBar(toolbarAdd)
 
-    var edit = false
     if (intent.hasExtra("placemark_edit")){
       placemark = intent.extras.getParcelable<PlacemarkModel>("placemark_edit")
       btnAdd.setText(R.string.button_savePlacemark)
       placemarkTitle.setText(placemark.title)
-      placemarkDescription.setText(placemark.description)
+      description.setText(placemark.description)
       if (placemark.image.isNotEmpty()) chooseImage.setText(R.string.button_changeImage)
       placemarkImage.setImageBitmap(readImageFromPath(this, placemark.image))
       edit = true
@@ -62,7 +62,7 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
 
     btnAdd.setOnClickListener() {
       placemark.title = placemarkTitle.text.toString()
-      placemark.description = placemarkDescription.text.toString()
+      placemark.description = description.text.toString()
       if (placemark.title.isNotEmpty()) {
         if (edit){
           app.placemarks.update(placemark.copy())
@@ -83,6 +83,7 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
     menuInflater.inflate(R.menu.menu_placemark, menu)
+    if (edit && menu != null) menu.getItem(0).setVisible(true)
     return super.onCreateOptionsMenu(menu)
   }
 
