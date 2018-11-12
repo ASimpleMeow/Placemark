@@ -1,7 +1,6 @@
 package org.wit.placemark.activities
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -15,30 +14,30 @@ import kotlinx.android.synthetic.main.content_placemark_maps.*
 import org.wit.placemark.helpers.readImageFromPath
 import org.wit.placemark.main.MainApp
 
-class PlacemarkMapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener {
+class PlacemarkMapView : AppCompatActivity(), GoogleMap.OnMarkerClickListener {
 
   lateinit var map: GoogleMap
-  lateinit var app: MainApp
+  lateinit var presenter: PlacemarkMapPresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_placemark_maps)
     setSupportActionBar(toolbarMaps)
-    app = application as MainApp
 
     mapView.onCreate(savedInstanceState)
     mapView.getMapAsync{
       map = it
-      configureMap()
+      map.setOnMarkerClickListener(this)
+      presenter.configureMap(map)
     }
   }
 
   override fun onMarkerClick(marker: Marker): Boolean {
     val tag = marker.tag as Long
-    val placemark = app.placemarks.findById(tag)
+    val placemark = presenter.app.placemarks.findById(tag)
     currentTitle.text = placemark!!.title
     currentDescription.text = placemark!!.description
-    imageView.setImageBitmap(readImageFromPath(this@PlacemarkMapsActivity, placemark.image))
+    imageView.setImageBitmap(readImageFromPath(this@PlacemarkMapView, placemark.image))
     return true
   }
 
@@ -65,16 +64,5 @@ class PlacemarkMapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListen
   override fun onSaveInstanceState(outState: Bundle?) {
     super.onSaveInstanceState(outState)
     mapView.onSaveInstanceState(outState)
-  }
-
-  fun configureMap() {
-    map.uiSettings.setZoomControlsEnabled(true)
-    map.setOnMarkerClickListener(this)
-    app.placemarks.finalAll().forEach {
-      val loc = LatLng(it.lat, it.lng)
-      val options = MarkerOptions().title(it.title).position(loc)
-      map.addMarker(options).tag = it.id
-      map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, it.zoom))
-    }
   }
 }
