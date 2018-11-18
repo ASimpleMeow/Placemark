@@ -1,20 +1,18 @@
-package org.wit.placemark.activities
+package org.wit.placemark.views.map
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import org.wit.placemark.R
 
 import kotlinx.android.synthetic.main.activity_placemark_maps.*
 import kotlinx.android.synthetic.main.content_placemark_maps.*
 import org.wit.placemark.helpers.readImageFromPath
-import org.wit.placemark.main.MainApp
+import org.wit.placemark.models.PlacemarkModel
+import org.wit.placemark.views.BaseView
 
-class PlacemarkMapView : AppCompatActivity(), GoogleMap.OnMarkerClickListener {
+class PlacemarkMapView : BaseView(), GoogleMap.OnMarkerClickListener {
 
   lateinit var map: GoogleMap
   lateinit var presenter: PlacemarkMapPresenter
@@ -22,22 +20,24 @@ class PlacemarkMapView : AppCompatActivity(), GoogleMap.OnMarkerClickListener {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_placemark_maps)
-    setSupportActionBar(toolbarMaps)
+    init(toolbarMaps)
+
+    presenter = initPresenter(PlacemarkMapPresenter(this)) as PlacemarkMapPresenter
 
     mapView.onCreate(savedInstanceState)
     mapView.getMapAsync{
-      map = it
-      map.setOnMarkerClickListener(this)
-      presenter.configureMap(map)
+      presenter.doPopulateMap(it)
     }
   }
 
+  override fun showPlacemark(placemark: PlacemarkModel){
+    currentTitle.text = placemark.title
+    currentDescription.text = placemark.description
+    imageView.setImageBitmap(readImageFromPath(this, placemark.image))
+  }
+
   override fun onMarkerClick(marker: Marker): Boolean {
-    val tag = marker.tag as Long
-    val placemark = presenter.app.placemarks.findById(tag)
-    currentTitle.text = placemark!!.title
-    currentDescription.text = placemark!!.description
-    imageView.setImageBitmap(readImageFromPath(this@PlacemarkMapView, placemark.image))
+    presenter.doMarkerSelected(marker)
     return true
   }
 

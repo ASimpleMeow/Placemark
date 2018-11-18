@@ -7,24 +7,27 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import kotlinx.android.synthetic.main.activity_placemark_list.*
 import org.wit.placemark.R
-import org.wit.placemark.activities.PlacemarkAdapter
-import org.wit.placemark.activities.PlacemarkListener
 import org.wit.placemark.models.PlacemarkModel
+import org.wit.placemark.views.BaseView
 
-class PlacemarkListView : AppCompatActivity(), PlacemarkListener {
+class PlacemarkListView : BaseView(), PlacemarkListener {
 
   lateinit var presenter: PlacemarkListPresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_placemark_list)
-    toolbarMain.title = title
-    setSupportActionBar(toolbarMain)
+    init(toolbarMain)
 
-    presenter = PlacemarkListPresenter(this)
+    presenter = initPresenter(PlacemarkListPresenter(this)) as PlacemarkListPresenter
+
     val layoutManager = LinearLayoutManager(this)
     recyclerView.layoutManager = layoutManager
-    recyclerView.adapter = PlacemarkAdapter(presenter.getPlacemarks(), this)
+    presenter.loadPlacemarks()
+  }
+
+  override fun showPlacemarks(placemarks: List<PlacemarkModel>) {
+    recyclerView.adapter = PlacemarkAdapter(placemarks, this)
     recyclerView.adapter?.notifyDataSetChanged()
   }
 
@@ -34,7 +37,7 @@ class PlacemarkListView : AppCompatActivity(), PlacemarkListener {
   }
 
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    when (item?.itemId) {
+    when (item?.itemId){
       R.id.item_add -> presenter.doAddPlacemark()
       R.id.item_map -> presenter.doShowPlacemarksMap()
     }
@@ -46,7 +49,7 @@ class PlacemarkListView : AppCompatActivity(), PlacemarkListener {
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    recyclerView.adapter?.notifyDataSetChanged()
+    presenter.loadPlacemarks()
     super.onActivityResult(requestCode, resultCode, data)
   }
 }

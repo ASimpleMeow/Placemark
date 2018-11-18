@@ -31,7 +31,7 @@ class PlacemarkJSONStore : PlacemarkStore, AnkoLogger{
     }
   }
 
-  override fun finalAll(): MutableList<PlacemarkModel> {
+  override fun findAll(): MutableList<PlacemarkModel> {
     return placemarks
   }
 
