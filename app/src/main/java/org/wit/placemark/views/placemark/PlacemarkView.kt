@@ -2,9 +2,9 @@ package org.wit.placemark.views.placemark
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.google.android.gms.maps.GoogleMap
 import kotlinx.android.synthetic.main.activity_placemark.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.toast
@@ -17,19 +17,24 @@ import org.wit.placemark.views.BaseView
 class PlacemarkView : BaseView(), AnkoLogger {
 
   lateinit var presenter: PlacemarkPresenter
+  lateinit var map: GoogleMap
   var placemark = PlacemarkModel()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_placemark)
+    mapView.onCreate(savedInstanceState)
+    mapView.getMapAsync {
+      map = it
+      presenter.doConfigureMap(map)
+      it.setOnMapClickListener { presenter.doSetLocation() }
+    }
 
     init(toolbarAdd)
 
     presenter = initPresenter(PlacemarkPresenter(this)) as PlacemarkPresenter
 
     chooseImage.setOnClickListener { presenter.doSelectImage() }
-
-    placemarkLocation.setOnClickListener { presenter.doSetLocation() }
   }
 
   override fun showPlacemark(placemark: PlacemarkModel) {
@@ -37,6 +42,8 @@ class PlacemarkView : BaseView(), AnkoLogger {
     description.setText(placemark.description)
     placemarkImage.setImageBitmap(readImageFromPath(this, placemark.image))
     if (placemark.image != null) chooseImage.setText(R.string.button_changeImage)
+    lat.setText("%.6f".format(placemark.lat))
+    lng.setText("%.6f".format(placemark.lng))
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -70,5 +77,31 @@ class PlacemarkView : BaseView(), AnkoLogger {
 
   override fun onBackPressed() {
     presenter.doCancel()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    mapView.onDestroy()
+  }
+
+  override fun onLowMemory() {
+    super.onLowMemory()
+    mapView.onLowMemory()
+  }
+
+  override fun onPause() {
+    super.onPause()
+    mapView.onPause()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    mapView.onResume()
+    presenter.doResartLocationUpdates()
+  }
+
+  override fun onSaveInstanceState(outState: Bundle?) {
+    super.onSaveInstanceState(outState)
+    mapView.onSaveInstanceState(outState)
   }
 }

@@ -26,7 +26,10 @@ class PlacemarkMapView : BaseView(), GoogleMap.OnMarkerClickListener {
 
     mapView.onCreate(savedInstanceState)
     mapView.getMapAsync{
-      presenter.doPopulateMap(it)
+      map = it
+      map.setOnMarkerClickListener(this)
+      presenter.loadPlacemarks()
+      presenter.doPopulateMap(map)
     }
   }
 

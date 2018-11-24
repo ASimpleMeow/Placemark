@@ -17,14 +17,12 @@ class EditLocationView : BaseView(), GoogleMap.OnMarkerDragListener, GoogleMap.O
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_maps)
     val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-
-    presenter = initPresenter(EditLocationPresenter(this)) as EditLocationPresenter
-
+    presenter = EditLocationPresenter(this)
     mapFragment.getMapAsync {
       map = it
       map.setOnMarkerDragListener(this)
       map.setOnMarkerClickListener(this)
-      presenter.initMap(map)
+      presenter.doConfigureMap(map)
     }
   }
 

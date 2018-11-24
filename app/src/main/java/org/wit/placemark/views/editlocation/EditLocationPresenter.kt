@@ -19,7 +19,7 @@ class EditLocationPresenter(view: BaseView): BasePresenter(view) {
     location = view.intent.extras.getParcelable<Location>("location")
   }
 
-  fun initMap(map: GoogleMap) {
+  fun doConfigureMap(map: GoogleMap) {
     val loc = LatLng(location.lat, location.lng)
     val options = MarkerOptions()
         .title("Placemark")
