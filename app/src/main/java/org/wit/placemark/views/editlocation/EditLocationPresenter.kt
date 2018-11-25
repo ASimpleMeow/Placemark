@@ -1,6 +1,5 @@
 package org.wit.placemark.views.editlocation
 
-import android.app.Activity
 import android.content.Intent
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -11,7 +10,7 @@ import org.wit.placemark.models.Location
 import org.wit.placemark.views.BasePresenter
 import org.wit.placemark.views.BaseView
 
-class EditLocationPresenter(view: BaseView): BasePresenter(view) {
+class EditLocationPresenter(view: BaseView) : BasePresenter(view) {
 
   var location = Location()
 
@@ -30,21 +29,20 @@ class EditLocationPresenter(view: BaseView): BasePresenter(view) {
     map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, location.zoom))
   }
 
-  fun doUpdateLocation(lat: Double, lng: Double, zoom: Float) {
+  fun doUpdateLocation(lat: Double, lng: Double) {
     location.lat = lat
     location.lng = lng
-    location.zoom = zoom
   }
 
-  fun doOnBackPressed() {
+  fun doSave() {
     val resultIntent = Intent()
     resultIntent.putExtra("location", location)
-    view?.setResult(Activity.RESULT_OK, resultIntent)
+    view?.setResult(0, resultIntent)
     view?.finish()
   }
 
   fun doUpdateMarker(marker: Marker) {
     val loc = LatLng(location.lat, location.lng)
-    marker.snippet = "GPS : " + loc.toString()
+    marker.setSnippet("GPS : " + loc.toString())
   }
 }

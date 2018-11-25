@@ -1,9 +1,9 @@
 package org.wit.placemark.views.placemarklist
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
 import kotlinx.android.synthetic.main.activity_placemark_list.*
 import org.wit.placemark.R
@@ -17,11 +17,11 @@ class PlacemarkListView : BaseView(), PlacemarkListener {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_placemark_list)
-    init(toolbarMain)
+    init(toolbarMain, false)
 
     presenter = initPresenter(PlacemarkListPresenter(this)) as PlacemarkListPresenter
 
-    val layoutManager = LinearLayoutManager(this)
+    val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     recyclerView.layoutManager = layoutManager
     presenter.loadPlacemarks()
   }

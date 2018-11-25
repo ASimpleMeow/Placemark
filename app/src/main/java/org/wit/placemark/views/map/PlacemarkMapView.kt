@@ -1,7 +1,7 @@
 package org.wit.placemark.views.map
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import org.wit.placemark.R
@@ -20,7 +20,7 @@ class PlacemarkMapView : BaseView(), GoogleMap.OnMarkerClickListener {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_placemark_maps)
-    init(toolbarMaps)
+    init(toolbarMaps, true)
 
     presenter = initPresenter(PlacemarkMapPresenter(this)) as PlacemarkMapPresenter
 

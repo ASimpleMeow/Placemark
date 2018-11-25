@@ -30,7 +30,7 @@ class PlacemarkView : BaseView(), AnkoLogger {
       it.setOnMapClickListener { presenter.doSetLocation() }
     }
 
-    init(toolbarAdd)
+    init(toolbarAdd, true)
 
     presenter = initPresenter(PlacemarkPresenter(this)) as PlacemarkPresenter
 

@@ -2,6 +2,9 @@
   <string name="app_name">Placemark</string>
   <string name="title_activity_placemark_maps">Map of All Placemarks </string>
   <string name="title_activity_maps">Map</string>
+  <string name="title_activity_placemark_list">Placemarks</string>
+  <string name="title_activity_placemark">Placemark</string>
+  <string name="title_activity_edit_location">Placemark</string>
 
   <string name="hint_placemarkTitle">Placemark Title</string>
   <string name="hint_placemarkDescription">Placemark Description</string>
@@ -20,6 +23,6 @@
   <string name="button_location">Set Location</string>
   <string name="button_addPlacemark">Add Placemark</string>
   <string name="button_savePlacemark">Save Placemark</string>
-    <string name="label_lat">Lat:</string>
+  <string name="label_lat">Lat:</string>
   <string name="label_lng">Lng:</string>
 </resources>
