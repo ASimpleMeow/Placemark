@@ -6,6 +6,8 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.wit.placemark.main.MainApp
 import org.wit.placemark.models.PlacemarkModel
 import org.wit.placemark.views.BasePresenter
@@ -13,23 +15,24 @@ import org.wit.placemark.views.BaseView
 
 class PlacemarkMapPresenter(view: BaseView): BasePresenter(view) {
 
-  fun doPopulateMap(map: GoogleMap){
+  fun doPopulateMap(map: GoogleMap, placemarks: List<PlacemarkModel>){
     map.uiSettings.setZoomControlsEnabled(true)
-    app.placemarks.findAll().forEach {
-      val loc = LatLng(it.lat, it.lng)
+    placemarks.forEach {
+      val loc = LatLng(it.location.lat, it.location.lng)
       val options = MarkerOptions().title(it.title).position(loc)
-      map.addMarker(options).tag = it.id
-      map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, it.zoom))
+      map.addMarker(options).tag = it
+      map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, it.location.zoom))
     }
   }
 
   fun doMarkerSelected(marker: Marker){
-    val tag = marker.tag as Long
-    val placemark = app.placemarks.findById(tag)
+    val placemark = marker.tag as PlacemarkModel
     if (placemark != null) view?.showPlacemark(placemark)
   }
 
   fun loadPlacemarks() {
-    view?.showPlacemarks(app.placemarks.findAll())
+    async(UI) {
+      view?.showPlacemarks(app.placemarks.findAll())
+    }
   }
 }

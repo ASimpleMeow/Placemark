@@ -29,7 +29,6 @@ class PlacemarkMapView : BaseView(), GoogleMap.OnMarkerClickListener {
       map = it
       map.setOnMarkerClickListener(this)
       presenter.loadPlacemarks()
-      presenter.doPopulateMap(map)
     }
   }
 
@@ -37,6 +36,10 @@ class PlacemarkMapView : BaseView(), GoogleMap.OnMarkerClickListener {
     currentTitle.text = placemark.title
     currentDescription.text = placemark.description
     imageView.setImageBitmap(readImageFromPath(this, placemark.image))
+  }
+
+  override fun showPlacemarks(placemarks: List<PlacemarkModel>) {
+    presenter.doPopulateMap(map, placemarks)
   }
 
   override fun onMarkerClick(marker: Marker): Boolean {

@@ -1,4 +1,4 @@
-package org.wit.placemark.models
+package org.wit.placemark.models.json
 
 import android.content.Context
 import com.google.gson.Gson
@@ -8,6 +8,8 @@ import org.jetbrains.anko.AnkoLogger
 import org.wit.placemark.helpers.exists
 import org.wit.placemark.helpers.read
 import org.wit.placemark.helpers.write
+import org.wit.placemark.models.PlacemarkModel
+import org.wit.placemark.models.PlacemarkStore
 import java.util.*
 
 
@@ -31,35 +33,33 @@ class PlacemarkJSONStore : PlacemarkStore, AnkoLogger{
     }
   }
 
-  override fun findAll(): MutableList<PlacemarkModel> {
+  override suspend fun findAll(): MutableList<PlacemarkModel> {
     return placemarks
   }
 
-  override fun findById(id:Long) : PlacemarkModel? {
+  override suspend fun findById(id:Long) : PlacemarkModel? {
     return placemarks.find { it.id == id }
   }
 
-  override fun create(placemark: PlacemarkModel) {
+  override suspend fun create(placemark: PlacemarkModel) {
     placemark.id = generateRandomId()
     placemarks.add(placemark)
     serialize()
   }
 
 
-  override fun update(placemark: PlacemarkModel) {
+  override suspend fun update(placemark: PlacemarkModel) {
     var foundPlacemark: PlacemarkModel? = placemarks.find { p -> p.id == placemark.id}
     if (foundPlacemark != null){
       foundPlacemark.title = placemark.title
       foundPlacemark.description = placemark.description
       foundPlacemark.image = placemark.image
-      foundPlacemark.lat = placemark.lat
-      foundPlacemark.lng = placemark.lng
-      foundPlacemark.zoom = placemark.zoom
+      foundPlacemark.location = placemark.location
       serialize()
     }
   }
 
-  override fun delete(placemark: PlacemarkModel) {
+  override suspend fun delete(placemark: PlacemarkModel) {
     placemarks.remove(placemark)
     serialize()
   }

@@ -10,6 +10,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.intentFor
 import org.wit.placemark.helpers.checkLocationPermissions
 import org.wit.placemark.helpers.createDefaultLocationRequest
@@ -45,18 +47,18 @@ class PlacemarkPresenter(view: BaseView): BasePresenter(view) {
 
   fun doConfigureMap(m: GoogleMap) {
     map = m
-    locationUpdate(placemark.lat, placemark.lng)
+    locationUpdate(placemark.location.lat, placemark.location.lng)
   }
 
   fun locationUpdate(lat: Double, lng: Double) {
-    placemark.lat = lat
-    placemark.lng = lng
-    placemark.zoom = 15f
+    placemark.location.lat = lat
+    placemark.location.lng = lng
+    placemark.location.zoom = 15f
     map?.clear()
     map?.uiSettings?.setZoomControlsEnabled(true)
-    val options = MarkerOptions().title(placemark.title).position(LatLng(placemark.lat, placemark.lng))
+    val options = MarkerOptions().title(placemark.title).position(LatLng(placemark.location.lat, placemark.location.lng))
     map?.addMarker(options)
-    map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(placemark.lat, placemark.lng), placemark.zoom))
+    map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(placemark.location.lat, placemark.location.lng), placemark.location.zoom))
     view?.showPlacemark(placemark)
   }
 
@@ -85,12 +87,14 @@ class PlacemarkPresenter(view: BaseView): BasePresenter(view) {
   fun doAddOrSave(title: String, description: String) {
     placemark.title = title
     placemark.description = description
-    if (edit) {
-      app.placemarks.update(placemark)
-    } else {
-      app.placemarks.create(placemark)
+    async(UI){
+      if (edit) {
+        app.placemarks.update(placemark)
+      } else {
+        app.placemarks.create(placemark)
+      }
+      view?.finish()
     }
-    view?.finish()
   }
 
   fun doCancel() {
@@ -98,8 +102,10 @@ class PlacemarkPresenter(view: BaseView): BasePresenter(view) {
   }
 
   fun doDelete() {
-    app.placemarks.delete(placemark)
-    view?.finish()
+    async(UI) {
+      app.placemarks.delete(placemark)
+      view?.finish()
+    }
   }
 
   fun doSelectImage() {
@@ -107,7 +113,7 @@ class PlacemarkPresenter(view: BaseView): BasePresenter(view) {
   }
 
   fun doSetLocation() {
-    view?.navigateTo(VIEW.LOCATION, LOCATION_REQUEST, "location", Location(placemark.lat, placemark.lng, placemark.zoom))
+    view?.navigateTo(VIEW.LOCATION, LOCATION_REQUEST, "location", Location(placemark.location.lat, placemark.location.lng, placemark.location.zoom))
   }
 
   override fun doActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -118,10 +124,10 @@ class PlacemarkPresenter(view: BaseView): BasePresenter(view) {
       }
       LOCATION_REQUEST -> {
         val location = data.extras.getParcelable<Location>("location")
-        placemark.lat = location.lat
-        placemark.lng = location.lng
-        placemark.zoom = location.zoom
-        locationUpdate(placemark.lat, placemark.lng)
+        placemark.location.lat = location.lat
+        placemark.location.lng = location.lng
+        placemark.location.zoom = location.zoom
+        locationUpdate(placemark.location.lat, placemark.location.lng)
       }
     }
   }

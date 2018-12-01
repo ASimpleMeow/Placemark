@@ -1,5 +1,7 @@
 package org.wit.placemark.views.placemarklist
 
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
@@ -25,6 +27,8 @@ class PlacemarkListPresenter(view: PlacemarkListView): BasePresenter(view) {
   }
 
   fun loadPlacemarks(){
-    view?.showPlacemarks(app.placemarks.findAll())
+    async(UI) {
+      view?.showPlacemarks(app.placemarks.findAll())
+    }
   }
 }
