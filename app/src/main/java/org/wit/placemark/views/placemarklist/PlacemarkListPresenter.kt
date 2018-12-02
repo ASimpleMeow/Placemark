@@ -26,6 +26,10 @@ class PlacemarkListPresenter(view: PlacemarkListView): BasePresenter(view) {
     view?.navigateTo(VIEW.MAPS)
   }
 
+  fun doLogout() {
+    view?.navigateTo(VIEW.LOGIN)
+  }
+
   fun loadPlacemarks(){
     async(UI) {
       view?.showPlacemarks(app.placemarks.findAll())

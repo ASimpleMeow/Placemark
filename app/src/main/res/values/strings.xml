@@ -5,6 +5,7 @@
   <string name="title_activity_placemark_list">Placemarks</string>
   <string name="title_activity_placemark">Placemark</string>
   <string name="title_activity_edit_location">Placemark</string>
+  <string name="title_activity_login"> Signup/Login to Placemark</string>
 
   <string name="hint_placemarkTitle">Placemark Title</string>
   <string name="hint_placemarkDescription">Placemark Description</string>
@@ -13,6 +14,8 @@
   <string name="menu_cancelPlacemark">Cancel</string>
   <string name="menu_deletePlacemark">Delete</string>
   <string name="menu_savePlacemark">Save</string>
+  <string name="menu_showMap">Show Map</string>
+  <string name="menu_logout">Logout</string>
 
   <string name="toast_enterTitle">Please Enter A Title</string>
   <string name="toast_placemarkAdded">Placemark Added Successfully</string>
