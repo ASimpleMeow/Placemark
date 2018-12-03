@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import com.bumptech.glide.Glide
 import com.google.android.gms.maps.GoogleMap
 import kotlinx.android.synthetic.main.activity_placemark.*
 import org.jetbrains.anko.AnkoLogger
@@ -40,7 +41,7 @@ class PlacemarkView : BaseView(), AnkoLogger {
   override fun showPlacemark(placemark: PlacemarkModel) {
     placemarkTitle.setText(placemark.title)
     description.setText(placemark.description)
-    placemarkImage.setImageBitmap(readImageFromPath(this, placemark.image))
+    Glide.with(this).load(placemark.image).into(placemarkImage)
     if (placemark.image != null) chooseImage.setText(R.string.button_changeImage)
     lat.setText("%.6f".format(placemark.location.lat))
     lng.setText("%.6f".format(placemark.location.lng))
